@@ -16,17 +16,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import com.github.jeronimo.ifood.cadastro.entity.Prato;
 import com.github.jeronimo.ifood.cadastro.entity.Restaurante;
+
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 @Path("/restaurantes")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "restaurante")
 public class RestauranteResource {
 
     @GET
     public List<Restaurante> buscar() {
         return Restaurante.listAll();
     }
+
     @POST
     @Transactional
     public void adicionar(Restaurante dto){
@@ -53,5 +60,70 @@ public class RestauranteResource {
     public void deletar(@PathParam("id") Long id){
         Optional<Restaurante>restauranteOp = Restaurante.findByIdOptional(id);
         restauranteOp.ifPresentOrElse(Restaurante::delete, () -> {throw new NotFoundException();});
+    }
+
+    // Pratos
+    @GET
+    @Path("{idRestaurante}/pratos")
+   @Tag(name = "prato")
+    public List<Restaurante> buscarPratos(@PathParam("idRestaurante") Long idRestaurante){
+        Optional<Restaurante> restauranteOp = Restaurante.findByIdOptional(idRestaurante);
+        if(restauranteOp.isEmpty()){
+            throw new NotFoundException();
+        }
+        return Prato.list("restaurante", restauranteOp.get());
+    }
+
+    @POST
+    @Path("{idRestaurante}/pratos")
+    @Transactional
+    @Tag(name = "prato")
+    public Response adicionarPrato(@PathParam("idRestaurante") Long idRestaurante, Prato dto){
+        Optional<Restaurante> restauranteOp = Restaurante.findByIdOptional(idRestaurante);
+        if(restauranteOp.isEmpty()){
+            throw new NotFoundException();
+        }
+
+        //
+        Prato prato = new Prato();
+        prato.nome = dto.nome;
+        prato.descricao = dto.descricao;
+        prato.preco = dto.preco;
+        prato.restaurante = restauranteOp.get();
+        prato.persist();
+        return Response.status(Status.CREATED).build();
+    }
+
+    @PUT
+    @Path("{idRestaurante}/pratos/{id}")
+    @Transactional
+    @Tag(name = "prato")
+    public void atualizarPrato(@PathParam("idRestaurante") Long idRestaurante, @PathParam("id") Long id, Prato dto){
+        Optional<Restaurante>restauranteOp = Restaurante.findByIdOptional(idRestaurante);
+        if(restauranteOp.isEmpty()){
+            throw new NotFoundException("Restaurante não existe");
+        }
+
+        Optional<Prato>pratoOP = Prato.findByIdOptional(id);
+        if(pratoOP.isEmpty()){
+            throw new NotFoundException("Prato não existe");
+        }
+        Prato prato = new Prato();
+        prato.preco = dto.preco;
+        prato.persist();
+    }
+
+    @DELETE
+    @Path("{idRestaurante}/pratos/{id}")
+    @Transactional
+    @Tag(name = "prato")
+    public void deletarPrato(@PathParam("idRestaurante") Long idRestaurante, @PathParam("id") Long id){
+        Optional<Restaurante>restauranteOp = Restaurante.findByIdOptional(id);
+        restauranteOp.ifPresentOrElse(Restaurante::delete, () -> {throw new NotFoundException("Restaurante não existe");});
+
+        Optional<Prato>pratoOP = Prato.findByIdOptional(id);
+        pratoOP.ifPresentOrElse(Prato::delete, () -> {
+            throw new NotFoundException("Prato não existe");
+        });
     }
 }

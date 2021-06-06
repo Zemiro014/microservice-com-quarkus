@@ -21,7 +21,6 @@ import com.github.jeronimo.ifood.cadastro.entity.Prato;
 import com.github.jeronimo.ifood.cadastro.entity.Restaurante;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 @Path("/restaurantes")
 @Produces(MediaType.APPLICATION_JSON)

@@ -8,3 +8,15 @@ services:
       POSTGRES_PASSWORD: cadastro
     ports:
       - "5432:5432"
+  keycloak_ifood:
+    container_name: keycloak_ifood
+    image: jboss/keycloak:13.0.1
+    environment: 
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: h2
+    ports:
+      - "8180:8080"
+# keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
+# Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
+

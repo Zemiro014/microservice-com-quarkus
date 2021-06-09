@@ -17,6 +17,18 @@ services:
       DB_VENDOR: h2
     ports:
       - "8180:8080"
+  jaeger_ifood:
+    container_name: jaeger_ifood
+    image: jaegertracing/all-in-one:1.22
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
 # keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
 # Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
 

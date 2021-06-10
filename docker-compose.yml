@@ -29,6 +29,17 @@ services:
       - "14268:14268"
       - "14250:14250"
       - "9411:9411"
+  
+  prometheus_ifood:
+    container_name: prometheus_ifood
+    image: prometheus-ifood
+    network_mode: "host"
+  
+  grafana_ifood:
+    container_name: grafana_ifood
+    image: grafana/grafana:6.5.0
+    network_mode: "host"
+
 # keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
 # Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
 

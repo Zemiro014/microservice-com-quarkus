@@ -34,6 +34,9 @@ import com.github.jeronimo.ifood.cadastro.entity.Prato;
 import com.github.jeronimo.ifood.cadastro.entity.Restaurante;
 import com.github.jeronimo.ifood.cadastro.infra.ConstraintViolationResponse;
 
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.SimplyTimed;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import org.eclipse.microprofile.openapi.annotations.enums.SecuritySchemeType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -61,6 +64,9 @@ public class RestauranteResource {
     PratoMapper pratoMapper;
 
     @GET
+    @Counted(name = "Quantidade busca restaurante")
+    @SimplyTimed(name = "Tempo simples de busca")
+    @Timed(name = "Tempo completo de busca")
     public List<RestauranteDTO> buscar() {
         Stream<Restaurante> restaurante = Restaurante.streamAll();
         return restaurante.map(r -> restauranteMapper.toRestauranteDTO(r)).collect(Collectors.toList());

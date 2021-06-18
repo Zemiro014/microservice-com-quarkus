@@ -48,6 +48,13 @@ services:
     image: grafana/grafana:6.5.0
     network_mode: "host"
 
+  artemis_ifood:
+    container_name: artemis_ifood
+    image: vromero/activemq-artemis:2.11.0
+    network_mode: "host"
+    environment: 
+      ARTEMIS_USERNAME: admin
+      ARTEMIS_PASSWORD: admin
 # keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
 # Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
 

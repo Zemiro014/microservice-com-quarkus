@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -46,6 +48,10 @@ import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.reactive.messaging.Channel;
+import org.eclipse.microprofile.reactive.messaging.Emitter;
+
+import io.quarkus.vertx.http.runtime.devmode.Json;
 
 @Path("/restaurantes")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +69,10 @@ public class RestauranteResource {
     @Inject
     PratoMapper pratoMapper;
 
+    @Inject
+    @Channel("restaurantes")
+    Emitter<String> emiter;
+
     @GET
     @Counted(name = "Quantidade busca restaurante")
     @SimplyTimed(name = "Tempo simples de busca")
@@ -76,10 +86,13 @@ public class RestauranteResource {
     @Transactional
     @APIResponse(responseCode = "201", description = "Caso restaurante seja cadastrado com sucesso")
     @APIResponse(responseCode = "400", content = @Content(schema = @Schema(allOf = ConstraintViolationResponse.class)))
-    public void adicionar(@Valid AdicionarRestauranteDTO dto){
+    public Response adicionar(@Valid AdicionarRestauranteDTO dto){
         Restaurante restaurante = restauranteMapper.toRestaurante(dto);
         restaurante.persist();
-        Response.status(Status.CREATED).build();
+        Jsonb create = JsonbBuilder.create();
+        String json = create.toJson(restaurante);
+        emiter.send(json);
+        return Response.status(Status.CREATED).build();
     }
 
     @PUT

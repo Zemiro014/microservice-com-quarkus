@@ -2,6 +2,9 @@ package com.github.jeronimo.ifood.mp.entities;
 
 import java.util.Date;
 
+import io.vertx.mutiny.pgclient.PgPool;
+import io.vertx.mutiny.sqlclient.Tuple;
+
 public class Restaurante {
 
     public Long id;
@@ -73,5 +76,13 @@ public class Restaurante {
         return "Restaurante [cnpj=" + cnpj + ", dataAtualizacao=" + dataAtualizacao + ", dataCriacao=" + dataCriacao
                 + ", id=" + id + ", localizacao=" + localizacao + ", nome=" + nome + ", proprietario=" + proprietario
                 + "]";
+    }
+
+    public void persiste(PgPool pgPool) {
+        pgPool.preparedQuery("insert into localizacao (id, latitude, longitude) values($1, $2, $3)")
+                .execute(Tuple.of(localizacao.getId(), localizacao.getLatitude(), localizacao.getLongitude())).await()
+                .indefinitely();
+        pgPool.preparedQuery("insert into restaurante (id, nome, localizacao_id) values ($1, $2, $3)")
+                .execute(Tuple.of(id, nome, localizacao.getId())).await().indefinitely();
     }
 }

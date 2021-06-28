@@ -25,6 +25,9 @@ services:
       DB_VENDOR: h2
     ports:
       - "8180:8080"
+# keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
+# Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
+
   jaeger_ifood:
     container_name: jaeger_ifood
     image: jaegertracing/all-in-one:1.22
@@ -55,6 +58,41 @@ services:
     environment: 
       ARTEMIS_USERNAME: admin
       ARTEMIS_PASSWORD: admin
-# keycloak: é uma ferramenta que serve para o gerenciamento de usuário ou acesso
-# Todos os modulos (cadastro, marketplace e pedido) vão poder usar ele. Por exemplo, se o usuário tiver 3 aplicativos, ele vai usar apenas uma senha que será válido para os 3 aplicativos
+
+  mongodb_ifood:
+    container_name: mongodb_ifood
+    image: mongo:4.2.5-bionic
+    ports:
+      - "27017:27017"
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: pedido
+      MONGO_INITDB_ROOT_PASSWORD: pedido
+      MONGO_INITDB_DATABASE: pedido
+
+  zookeeper:
+    container_name: zookeeper_container
+    image: debezium/zookeeper:1.1
+    ports:
+    - 2181:2181
+    - 2888:2888
+    - 3888:3888
+  kafka:
+    container_name: kafka_container
+    image: debezium/kafka:1.1
+    ports:
+    - 9092:9092
+    links:
+    - zookeeper
+    environment:
+    - ZOOKEEPER_CONNECT=zookeeper:2181
+    
+  kafdrop:
+    container_name: kafdrop_container
+    image: obsidiandynamics/kafdrop:3.24.0
+    environment:
+      KAFKA_BROKERCONNECT: kafka:9092
+    ports:
+    - 9000:9000
+    depends_on:
+      - kafka
 

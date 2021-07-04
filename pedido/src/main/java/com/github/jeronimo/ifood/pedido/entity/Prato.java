@@ -1,3 +1,5 @@
+package com.github.jeronimo.ifood.pedido.entity;
+
 import org.bson.types.Decimal128;
 
 public class Prato {

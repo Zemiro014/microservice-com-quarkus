@@ -1,3 +1,6 @@
+package com.github.jeronimo.ifood.pedido.entity;
+import java.util.List;
+
 import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 

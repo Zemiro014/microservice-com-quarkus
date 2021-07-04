@@ -1,3 +1,5 @@
+package com.github.jeronimo.ifood.pedido.entity;
+
 public class Restaurante {
 
     private String nome;

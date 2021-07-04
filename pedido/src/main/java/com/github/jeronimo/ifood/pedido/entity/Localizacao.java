@@ -1,5 +1,6 @@
-public class Localizacao {
+package com.github.jeronimo.ifood.pedido.entity;
 
+public class Localizacao {
     private Double latitude;
     private Double longitude;
     
